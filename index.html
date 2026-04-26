@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Differential Geometry Lab</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="course-rail" aria-label="Course path">
+        <header class="brand-block">
+          <p class="eyebrow">Interactive course</p>
+          <h1>Differential Geometry Lab</h1>
+          <p>Visualize the textbook path from charts to curvature and geodesics.</p>
+        </header>
+
+        <div class="progress-box">
+          <div class="progress-label">
+            <span id="progressText">Module 1 of 12</span>
+            <span id="progressPercent">8%</span>
+          </div>
+          <div class="progress-track"><div id="progressFill"></div></div>
+        </div>
+
+        <nav id="moduleList" class="module-list"></nav>
+      </aside>
+
+      <main class="lab">
+        <section class="viewport-panel" aria-label="Geometry visualizer">
+          <div class="viewport-topbar">
+            <div>
+              <p class="eyebrow">Live surface</p>
+              <h2 id="sceneTitle">Charts and coordinates</h2>
+            </div>
+            <div class="topbar-actions">
+              <label>
+                <span>Surface</span>
+                <select id="surfaceSelect"></select>
+              </label>
+              <button id="autoRotateBtn" class="icon-button" type="button" aria-pressed="true" title="Toggle rotation">
+                <span aria-hidden="true">R</span>
+              </button>
+              <button id="resetCameraBtn" class="icon-button" type="button" title="Reset camera">
+                <span aria-hidden="true">O</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="sceneCanvas" aria-label="Rotating differential geometry surface"></canvas>
+            <div class="scene-legend" id="sceneLegend"></div>
+            <div class="camera-hint">drag to orbit / wheel to zoom</div>
+          </div>
+
+          <div class="metric-strip" id="metricReadout"></div>
+        </section>
+
+        <aside class="study-panel" aria-label="Lesson and controls">
+          <section class="lesson-panel">
+            <div class="lesson-header">
+              <p class="eyebrow" id="chapterTag">Chapter 1</p>
+              <h2 id="lessonTitle">What is differential geometry?</h2>
+            </div>
+            <p id="lessonIntro" class="lesson-intro"></p>
+            <dl class="lesson-notes">
+              <div>
+                <dt>Formal seed</dt>
+                <dd id="formalSeed"></dd>
+              </div>
+              <div>
+                <dt>Watch for</dt>
+                <dd id="watchFor"></dd>
+              </div>
+              <div>
+                <dt>Mini experiment</dt>
+                <dd id="miniExperiment"></dd>
+              </div>
+            </dl>
+            <div class="lesson-actions">
+              <button id="prevModule" type="button">Previous</button>
+              <button id="nextModule" type="button">Next concept</button>
+            </div>
+          </section>
+
+          <section class="control-panel">
+            <div class="panel-heading">
+              <p class="eyebrow">Simulation controls</p>
+              <h2>Manipulate the geometry</h2>
+            </div>
+
+            <div class="toggle-grid">
+              <label><input id="showGrid" type="checkbox" checked> Parameter net</label>
+              <label><input id="showContours" type="checkbox" checked> Contours</label>
+              <label><input id="showVectors" type="checkbox" checked> Vectors</label>
+              <label><input id="showTangent" type="checkbox" checked> Tangent plane</label>
+              <label><input id="showGeodesic" type="checkbox" checked> Geodesic</label>
+              <label><input id="showCurvature" type="checkbox" checked> Curvature heat</label>
+            </div>
+
+            <div class="slider-stack">
+              <label>
+                <span>Curvature / height</span>
+                <input id="ampSlider" type="range" min="-1.6" max="1.8" step="0.02" value="0.9">
+              </label>
+              <label>
+                <span>Stretch x direction</span>
+                <input id="stretchUSlider" type="range" min="0.45" max="1.8" step="0.01" value="1">
+              </label>
+              <label>
+                <span>Stretch y direction</span>
+                <input id="stretchVSlider" type="range" min="0.45" max="1.8" step="0.01" value="1">
+              </label>
+              <label>
+                <span>Twist</span>
+                <input id="twistSlider" type="range" min="-1.2" max="1.2" step="0.01" value="0">
+              </label>
+              <label>
+                <span>Probe u</span>
+                <input id="uSlider" type="range" min="0.05" max="0.95" step="0.005" value="0.52">
+              </label>
+              <label>
+                <span>Probe v</span>
+                <input id="vSlider" type="range" min="0.05" max="0.95" step="0.005" value="0.48">
+              </label>
+              <label>
+                <span>Geodesic angle</span>
+                <input id="angleSlider" type="range" min="0" max="6.283" step="0.01" value="0.7">
+              </label>
+              <label>
+                <span>Contour count</span>
+                <input id="contourSlider" type="range" min="3" max="16" step="1" value="8">
+              </label>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "differential-geometry-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "check:render": "node tests/render-check.mjs",
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "three": "^0.164.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.44.1",
+    "vite": "^8.0.10"
+  }
+}
