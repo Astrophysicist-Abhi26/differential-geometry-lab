@@ -229,6 +229,131 @@ const surfaceDefs = {
       return twistY(p, state.twist * Math.sin(phi) * 0.7);
     }
   },
+
+  klein: {
+    label: "Klein bottle",
+    closedU: true,
+    closedV: true,
+    sample(s, t, state) {
+      /*
+        Refined Klein bottle immersion.
+
+        This version is tuned for visual intuition:
+        - fuller lower bulb
+        - thicker entering hose
+        - smoother S-like handle
+        - semi-transparent rendering is enabled separately in buildSurfaceMesh()
+
+        Mathematical note:
+        A true Klein bottle cannot be embedded in ordinary R^3 without
+        self-intersection. This is an immersed visualization.
+      */
+      const u = s * TAU;
+      const v = t * TAU;
+
+      const cu = Math.cos(u);
+      const su = Math.sin(u);
+      const cv = Math.cos(v);
+      const sv = Math.sin(v);
+
+      /*
+        a controls the tube radius.
+        hoseBoost thickens the handle/neck part so it does not look like
+        a thin thread entering a bulky body.
+      */
+      const a = 1 - 0.5 * cu;
+      const hoseBoost = 1.35 + 0.35 * Math.max(0, -cu);
+
+      let xRaw;
+      let yRaw;
+
+      if (u < Math.PI) {
+        xRaw =
+          4.8 * cu * (1 + 0.55 * su) +
+          3.2 * hoseBoost * a * cu * cv;
+
+        yRaw =
+          10.0 * su +
+          3.2 * hoseBoost * a * su * cv;
+      } else {
+        xRaw =
+          4.8 * cu * (1 + 0.55 * su) +
+          3.2 * hoseBoost * a * Math.cos(v + Math.PI);
+
+        yRaw = 10.0 * su;
+      }
+
+      const zRaw = 4.25 * hoseBoost * a * sv;
+
+      /*
+        Display transform.
+        The goal is not to change topology, only to make the visual object
+        similar in scale to the original sphere/torus surfaces.
+      */
+      const p = new THREE.Vector3(
+        0.185 * xRaw * state.stretchU,
+        0.160 * yRaw - 0.04,
+        0.215 * zRaw * state.stretchV
+      );
+
+      return twistY(p, state.twist * 0.08 * p.y);
+    }
+  }
+
+,
+
+  mobius: {
+    label: "Mobius strip",
+    closedU: true,
+    closedV: false,
+    sample(s, t, state) {
+      /*
+        Wider and more visually appealing Möbius strip.
+        It remains non-orientable and has one boundary component.
+      */
+      const u = s * TAU;
+      const w = (t * 2 - 1) * 0.66 * state.stretchV;
+      const R = 1.12 * state.stretchU;
+
+      const p = new THREE.Vector3(
+        (R + w * Math.cos(u / 2)) * Math.cos(u),
+        0.95 * w * Math.sin(u / 2) * (1 + 0.04 * state.amp),
+        (R + w * Math.cos(u / 2)) * Math.sin(u)
+      );
+
+      return twistY(p, state.twist * 0.10 * Math.sin(u));
+    }
+  }
+
+,
+
+  helicoid: {
+    label: "Helicoid",
+    closedU: false,
+    closedV: false,
+    sample(s, t, state) {
+      /*
+        Helicoid with more visible separation between folds.
+
+        u controls the number of turns.
+        pitch controls the vertical gap between successive sheets.
+      */
+      const u = (s * 2 - 1) * Math.PI * 3.5;
+      const v = (t * 2 - 1) * 0.34 * state.stretchU;
+      const pitch = (0.125 + 0.020 * state.amp) * state.stretchV;
+
+      const p = new THREE.Vector3(
+        v * Math.cos(u),
+        pitch * u,
+        v * Math.sin(u)
+      );
+
+      return twistY(p, state.twist * 0.015 * u);
+    }
+  }
+
+,
+
   pseudosphere: {
     label: "Pseudosphere patch",
     closedU: true,
@@ -542,16 +667,22 @@ function buildSurfaceMesh(def) {
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
 
+  const isKlein = state.surface === "klein";
+
   const material = new THREE.MeshStandardMaterial({
     color: state.showCurvature ? 0xffffff : 0x9ec9bb,
     vertexColors: state.showCurvature,
     metalness: 0.02,
     roughness: 0.58,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    transparent: isKlein,
+    opacity: isKlein ? 0.68 : 1.0,
+    depthWrite: !isKlein
   });
 
   const surfaceMesh = new THREE.Mesh(geometry, material);
   surfaceMesh.name = "curvature-surface";
+  surfaceMesh.renderOrder = isKlein ? 2 : 0;
   return { mesh: surfaceMesh, points, uSeg, vSeg, minY, maxY };
 }
 
